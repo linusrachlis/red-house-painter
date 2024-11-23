@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Red House Painter</title>
+  </head>
+  <body>
+      <fieldset>
+          <legend>Colours</legend>
+          <button id="button_color_black" style="background-color: black;">Black</button>
+          <button id="button_color_red" style="background-color: red;">Red</button>
+          <button id="button_color_green" style="background-color: green;">Green</button>
+          <button id="button_color_yellow" style="background-color: yellow; color: black;">Yellow</button>
+          <button id="button_color_blue" style="background-color: blue;">Blue</button>
+          <button id="button_color_white" style="background-color: white; color: black;">White</button>
+      </fieldset>
+      <fieldset>
+          <legend id=input_size_label>Size</legend>
+          <input type=range id=input_size min=1 max=100 aria-labelledby=input_size_label value=10>
+      </fieldset>
+	  <canvas id="canvas"></canvas>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
