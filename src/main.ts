@@ -1,14 +1,5 @@
 import './style.css';
 
-function draw(
-    ctx: CanvasRenderingContext2D,
-    size: number,
-    x: number,
-    y: number,
-): void {
-    ctx.fillRect(x - size / 2, y - size / 2, size, size);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     const canvas = document.querySelector<HTMLCanvasElement>('#canvas')!;
     canvas.width = window.visualViewport!.width;
@@ -16,13 +7,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
     ctx.fillStyle = 'red';
     let size = 10;
-    let isDown = false;
+    let activePointerIds: number[] = [];
 
     const changeFillStyle = (fillStyle: string) => {
         ctx.fillStyle = fillStyle;
     };
     const changeSize = (newSize: number) => {
         size = newSize;
+    };
+    const draw = (size: number, x: number, y: number): void => {
+        ctx.fillRect(x - size / 2, y - size / 2, size, size);
     };
 
     const button_color_black = document.querySelector<HTMLButtonElement>(
@@ -66,27 +60,21 @@ document.addEventListener('DOMContentLoaded', () => {
         changeSize(parseInt((e.target as HTMLInputElement).value));
     });
 
+    // This works on everything I tried except for Firefox Android. For some reason a second touch pointer stops after the first 'pointermove' and no more events seem to come for that pointer. Not sure if that's a mistake I've made or something wrong with FF Android specifically. Maybe need to experiment with https://patrickhlauke.github.io/touch/ on FF Android to see if not all expected events are received.
     canvas.addEventListener('pointerdown', (e) => {
-        isDown = true;
-        // console.log('pointerdown', e.pointerId);
-        canvas.setPointerCapture(e.pointerId);
-        draw(ctx, size, e.offsetX, e.offsetY);
-        e.preventDefault();
-    });
-    canvas.addEventListener('pointerup', (e) => {
-        isDown = false;
-        // console.log('pointerup', e.pointerId);
-        canvas.setPointerCapture(e.pointerId);
-        draw(ctx, size, e.offsetX, e.offsetY);
-        e.preventDefault();
+        activePointerIds.push(e.pointerId);
+        draw(size, e.offsetX, e.offsetY);
     });
     canvas.addEventListener('pointermove', (e) => {
-        // console.log('pointermove', e.pointerId);
-        if (isDown) {
-            draw(ctx, size, e.offsetX, e.offsetY);
+        if (activePointerIds.includes(e.pointerId)) {
+            draw(size, e.offsetX, e.offsetY);
         }
-        e.preventDefault();
     });
+    canvas.addEventListener('pointerup', (e) => {
+        activePointerIds = activePointerIds.filter((el) => el !== e.pointerId);
+    });
+
+    // Stop touch events on the canvas from scrolling the page
     canvas.addEventListener(
         'touchstart',
         (e) => {

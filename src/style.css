@@ -35,6 +35,11 @@ canvas {
     border: 1px solid gray;
     touch-events: none;
 }
+
+#fieldset_colours button {
+    color: white;
+}
+
 input#input_size {
     width: 100%;
     max-width: 500px;
