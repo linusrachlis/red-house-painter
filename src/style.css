@@ -36,8 +36,19 @@ canvas {
     touch-events: none;
 }
 
-#fieldset_colours button {
+#fieldset_colors {
     color: white;
+
+    label {
+        border-radius: 0.5em;
+        padding: 0.6em 1em;
+        cursor: pointer;
+
+        input[type='radio'] {
+            padding: 0;
+            margin: 0 0.5em 0 0;
+        }
+    }
 }
 
 input#input_size {

@@ -5,31 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.width = window.visualViewport!.width;
     canvas.height = window.visualViewport!.height;
     const ctx = <CanvasRenderingContext2D>canvas.getContext('2d');
-    let colour: string;
+    let color: string;
     let size: number;
     let activePointerIds: number[] = [];
 
-    const button_color_black = document.querySelector<HTMLButtonElement>(
-        '#button_color_black',
-    )!;
-    const button_color_red =
-        document.querySelector<HTMLButtonElement>('#button_color_red')!;
-    const button_color_green = document.querySelector<HTMLButtonElement>(
-        '#button_color_green',
-    )!;
-    const button_color_yellow = document.querySelector<HTMLButtonElement>(
-        '#button_color_yellow',
-    )!;
-    const button_color_blue =
-        document.querySelector<HTMLButtonElement>('#button_color_blue')!;
-    const button_color_white = document.querySelector<HTMLButtonElement>(
-        '#button_color_white',
+    const colorButtons = document.querySelectorAll<HTMLInputElement>(
+        '#fieldset_colors input[type=radio]',
     )!;
     const previewElement = document.querySelector<HTMLDivElement>('#preview')!;
     const input_size = document.querySelector<HTMLInputElement>('#input_size')!;
 
-    const changeColour = (newColour: string): void => {
-        colour = newColour;
+    const changeColor = (newColour: string): void => {
+        color = newColour;
         ctx.fillStyle = newColour;
     };
     const changeSize = (newSize: number): void => {
@@ -38,46 +25,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const updatePreview = (): void => {
         previewElement.style.width = `${size}px`;
         previewElement.style.height = `${size}px`;
-        previewElement.style.backgroundColor = colour;
+        previewElement.style.backgroundColor = color;
     };
     const draw = (size: number, x: number, y: number): void => {
         ctx.fillRect(x - size / 2, y - size / 2, size, size);
     };
+    const colorButtonHandler = (e: Event): void => {
+        const button = e.target as HTMLInputElement;
+        console.log(`change: ${button.id} => ${button.checked}`);
+        if (!button.checked) return;
+        changeColor(button.dataset.color as string);
+        updatePreview();
+    };
 
-    // Initialize options
-    changeColour('red');
-    changeSize(10);
-    updatePreview();
-
-    button_color_black.addEventListener('click', () => {
-        changeColour('black');
-        updatePreview();
-    });
-    button_color_red.addEventListener('click', () => {
-        changeColour('red');
-        updatePreview();
-    });
-    button_color_green.addEventListener('click', () => {
-        changeColour('green');
-        updatePreview();
-    });
-    button_color_yellow.addEventListener('click', () => {
-        changeColour('yellow');
-        updatePreview();
-    });
-    button_color_blue.addEventListener('click', () => {
-        changeColour('blue');
-        updatePreview();
-    });
-    button_color_white.addEventListener('click', () => {
-        changeColour('white');
-        updatePreview();
+    colorButtons.forEach((e) => {
+        e.addEventListener('change', colorButtonHandler);
     });
 
     input_size.addEventListener('change', (e) => {
         changeSize(parseInt((e.target as HTMLInputElement).value));
         updatePreview();
     });
+
+    // Initialize options
+    changeColor('red');
+    changeSize(10);
+    updatePreview();
 
     // This works on everything I tried except for Firefox Android. For some
     // reason a second touch pointer stops after the first 'pointermove' and no
